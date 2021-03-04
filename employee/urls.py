@@ -8,6 +8,8 @@ app_name = 'profiles'
 urlpatterns = [
     path('contracts/accepted', views.accepted_contracts, name='accepted_contracts'), #get user's dashboard
     path('contracts/completed', views.completed_contracts, name='accepted_contracts'), #get user's dashboard
+    path('contracts/feedback', views.feedback, name='feedback'), #get user's dashboard
+
     #path('contracts/accepted/details/<str:job_id>', views.accepted_contracts_details, name='accepted_contracts_details'), #get user's dashboard
     #path('contracts/completed/details/<str:job_id>', views.completed_contracts_details, name='accepted_contracts_details'), #get user's dashboard
     path('translator/invitation/<str:email>/<str:token>', views.invite_link, name='invite_link'), #get user's dashboard

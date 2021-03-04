@@ -21,6 +21,7 @@ from users.models import User
 from django.contrib.auth.models import auth
 from django.contrib.auth import authenticate, login
 from administrator.models import invite_links
+from common.models import Notifications
 
 @api_view(['POST'])
 @authentication_classes([CsrfExemptSessionAuthentication, SessionAuthentication, BasicAuthentication])
@@ -214,7 +215,8 @@ def create_submission(request):
  
     
 
-from common.models import Attachment
+from common.models import Attachment, Status
+from users.models import User
 @api_view(['POST'])
 @authentication_classes([CsrfExemptSessionAuthentication, SessionAuthentication, BasicAuthentication])
 def mark_contract_completed(request):
@@ -230,6 +232,19 @@ def mark_contract_completed(request):
                     contract_obj.completed = True
                     contract_obj.completion_date = timezone.now()
                     contract_obj.save()
+                    #print(contract_obj.job.total_contracts, contract_obj.job.completed_contracts)
+                    if contract_obj.job.total_contracts() == contract_obj.job.completed_contracts():
+                        contract_obj.job.status = Status.objects.create(status_name="DN", comment="Job has been completed.")
+                        contract_obj.job.save()
+                        admins = User.objects.all().filter(is_superuser=True)
+                        for admin in admins:
+                            Notifications.objects.create(target=admin, creation_date=timezone.now(), text="Job has been completed.", icon="fas fa-check", colour="success", link="/jobs/details/{}".format(contract_obj.job.job_id))
+                        Notifications.objects.create(target=contract_obj.job.employeer, creation_date=timezone.now(), text="Job has been completed.", icon="fas fa-check", colour="success", link="/jobs/details/{}".format(contract_obj.job.job_id))
+                    else:
+                        Notifications.objects.create(target=contract_obj.job.employeer, creation_date=timezone.now(), text="We've made progress with your job!", icon="fas fa-tasks", colour="success", link="/jobs/details/{}".format(contract_obj.job.job_id))
+                        admins = User.objects.all().filter(is_superuser=True)
+                        for admin in admins:
+                            Notifications.objects.create(target=admin, creation_date=timezone.now(), text="Job has progressed.", icon="fas fa-tasks", colour="success", link="/jobs/details/{}".format(contract_obj.job.job_id))
                     return Response(status=status.HTTP_202_ACCEPTED)
 
                 else:

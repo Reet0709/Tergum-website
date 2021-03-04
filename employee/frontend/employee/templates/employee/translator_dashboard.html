@@ -74,9 +74,17 @@
 								<div class="card-body">
 									<div class="row no-gutters align-items-center">
 										<div class="col mr-2">
-											<div class="text-xs font-weight-bold text-success text-uppercase mb-1"> User Feedback </div>
-											<div class="h6 mb-0 font-weight-bold text-gray-800"><i class="fas fa-star" style="color: #009970;"></i> <i class="fas fa-star" style="color: #009970;"></i> <i class="fas fa-star" style="color: #009970;"></i> <i class="fas fa-star" style="color: #009970;"></i> <i class="fas fa-star text-gray-300"></i> </div>
-										</div>
+											<div class="text-xs font-weight-bold text-success text-uppercase mb-1"><a href="/contracts/feedback">User Feedback</a> </div>
+											<div class="h6 mb-0 ml-1 font-weight-bold text-gray-800">
+												{% if stars %}
+												{%for star in stars%}
+												<i class="fas fa-star" style="color: #009970;"></i> 
+												{%endfor%} 
+												{% else %}
+												no ratings
+												{%endif%}
+												</div>
+											</div>
 										<div class="col-auto"> <i class="fas fa-user fa-2x text-gray-300"></i> </div>
 									</div>
 								</div>
@@ -88,10 +96,10 @@
 								<div class="card-body">
 									<div class="row no-gutters align-items-center">
 										<div class="col mr-2">
-											<div class="text-xs font-weight-bold text-success text-uppercase mb-1"> Pending Requests </div>
-											<div class="h5 mb-0 font-weight-bold text-gray-800">8</div>
+											<div class="text-xs font-weight-bold text-success text-uppercase mb-1"> Completed Contracts </div>
+											<div class="h5 mb-0 font-weight-bold text-gray-800">{{completed_contracts}}</div>
 										</div>
-										<div class="col-auto"> <i class="fas fa-comments fa-2x text-gray-300"></i> </div>
+										<div class="col-auto"> <i class="fas fa-file fa-2x text-gray-300"></i> </div>
 									</div>
 								</div>
 							</div>

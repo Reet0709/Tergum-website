@@ -7,6 +7,8 @@ import datetime
 from services.models import Contract
 from profiles.models import Profile
 from django.contrib import messages
+from common.models import Notifications
+from users.models import User
 
 def dashboard(request):
     '''
@@ -23,21 +25,45 @@ def dashboard(request):
     ''' 
     print(request.user.is_superuser)
     if request.user.is_superuser and request.user.is_active:
-        return render(request, 'administrator/admin_dashboard.html')
+        
+        notifications = Notifications.objects.all().filter(target=request.user).order_by('-pk')[:10:1]
+        active_jobs = Job.objects.all().filter(accepted=True).exclude(status__status_name="DN")
+        completed_jobs = len(Job.objects.all().filter(status__status_name="DN"))
+        translator_count = len(User.objects.all().filter(is_staff=True, is_active=True))
+        pending_jobs = len(Job.objects.all().filter(paid=False))
+        active_jobs_count = len(active_jobs)
+
+        return render(request, 'administrator/admin_dashboard.html', {"dashboard":True, "notifications":notifications, "active_jobs":active_jobs, "completed_jobs":completed_jobs, "translator_count":translator_count, "pending_jobs":pending_jobs, "active_jobs_count":active_jobs_count})
     elif request.user.is_staff and request.user.is_active:
         translation_contracts = []
         proofreading_contracts = []
         profile_obj = Profile.objects.get(user=request.user)
         completed_contracts = Contract.objects.all().filter(profile=request.user, completed=True)
         total_earning = 0
+        total_rating = 0
+        total_rated_contracts = 0
         for contract in completed_contracts:
             total_earning += contract.contract_price
+            if contract.rating:
+                total_rating += contract.rating
+                total_rated_contracts += 1
+        try:
+            avg_rating = int(total_rating//total_rated_contracts)
+        except:
+            avg_rating = 0
+        stars = []
+        for star in range(avg_rating):
+            stars.append(star)
         ongoing_projects = Contract.objects.all().filter(profile=request.user, completed=False).count()
         for from_language in profile_obj.from_languages.all():
             for to_language in profile_obj.to_languages.all():
                 translation_contracts.extend(Contract.objects.all().filter(dependency = None, is_signed=False, target_language=to_language, job__source_language = from_language, job__paid = True))
                 proofreading_contracts.extend(Contract.objects.all().filter(dependency__completed = True, is_signed=False, target_language=to_language, job__source_language = from_language, job__paid = True))
-        return render(request, 'employee/translator_dashboard.html', {"translation_contracts":translation_contracts, "proofreading_contracts":proofreading_contracts, "total_earning":total_earning, "ongoing_projects":ongoing_projects})
+        
+        #completed_contracts = Contract.objects.all().filter(profile=request.user, completed=True)
+        
+        notifications = Notifications.objects.all().filter(target=request.user).order_by('-pk')[:10:1]
+        return render(request, 'employee/translator_dashboard.html', {"dashboard":True, "notifications":notifications, "completed_contracts":len(completed_contracts), "translation_contracts":translation_contracts, "proofreading_contracts":proofreading_contracts, "total_earning":total_earning, "ongoing_projects":ongoing_projects, "stars":stars})
     
     elif request.user.is_active:
         #customer's dashboard
@@ -63,7 +89,9 @@ def dashboard(request):
         #messages.add_message(request, messages.INFO, 'Something went wrong, try again later.') 
 
         #render customer's dashboard with requied data
-        return render(request, 'customer/dashboard.html', {"active_jobs":active_jobs, "draft_jobs":active_drafts, "completed_jobs":completed_jobs})
+        notifications = Notifications.objects.all().filter(target=request.user).order_by('-pk')[:2:1]
+        
+        return render(request, 'customer/dashboard.html', {"notifications":notifications, "active_jobs":active_jobs, "draft_jobs":active_drafts, "completed_jobs":completed_jobs})
     else:
         return redirect("/login") #TODO replace with view url lookups.      
             

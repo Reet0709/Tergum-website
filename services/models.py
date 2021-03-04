@@ -107,10 +107,10 @@ class Job(models.Model):
     instruction = models.TextField(blank=True, null=True)
     content =  models.ForeignKey('common.Content', on_delete=models.CASCADE, blank=True, null=True)
     attachments = models.ManyToManyField('common.Attachment',related_name='job_attachments')
-    accepted =  models.BooleanField(default=False)
-    paid =  models.BooleanField(default=False)
+    accepted =  models.BooleanField(default=False) #draft --> pending
+    paid =  models.BooleanField(default=False) #pending --> paid
     status = models.ForeignKey('common.Status', on_delete=models.CASCADE, null=True)
-    chat = models.ManyToManyField('services.Message',related_name='chat_message', blank=True, null=True)
+    chat = models.ManyToManyField('services.Message',related_name='chat_message', blank=True)
     class Meta:
         verbose_name = 'job'
         verbose_name_plural = 'jobs'

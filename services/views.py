@@ -44,7 +44,7 @@ def order_step2(request, job_id):
         all_profile = Profile.objects.all().filter(from_languages=job_obj.source_language)
         supported_to_langs = []
         for profile in all_profile:
-            supported_to_langs.extend(profile.from_languages.all().exclude(pk=job_obj.source_language.pk)  )
+            supported_to_langs.extend(profile.to_languages.all().exclude(pk=job_obj.source_language.pk)  )
         supported_to_langs = list(set(supported_to_langs))
 
 

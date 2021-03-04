@@ -5,6 +5,9 @@ from services.models import Contract
 def accepted_contracts(request):
     if request.user.is_staff and request.user.is_active:
         accepted_contracts = Contract.objects.all().filter(profile=request.user, completed=False)
+        from common.models import Notifications
+        notifications = Notifications.objects.all().filter(target=request.user)
+        #"notifications":notifications
         return render(request, 'employee/accepted_contracts.html', {"accepted_contracts":accepted_contracts})
     else:
         return redirect("/login") #TODO replace with view url lookups.      
@@ -21,6 +24,15 @@ def settings(request):
     if request.user.is_staff and request.user.is_active:
         profile = Profile.objects.get(user=request.user)
         return render(request, 'employee/settings.html', {"profile":profile})
+    else:
+        return redirect("/login") #TODO replace with view url lookups.      
+
+
+
+def feedback(request):
+    if request.user.is_staff and request.user.is_active:
+        completed_contracts = Contract.objects.all().filter(profile=request.user, completed=True)
+        return render(request, 'employee/view_feedback.html', {"completed_contracts":completed_contracts})
     else:
         return redirect("/login") #TODO replace with view url lookups.      
 

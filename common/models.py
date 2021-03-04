@@ -205,3 +205,18 @@ class Attachment(models.Model):
         self.attachment_id = create_attachment_id() 
         super(Attachment, self).save(*args, **kwargs)
  
+
+#
+
+class Notifications(models.Model):
+    target = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    text = models.CharField(max_length=50)
+    icon = models.CharField(max_length=30)
+    colour = models.CharField(max_length=30)
+
+    link = models.CharField(max_length=500, blank=False, null=False)
+    creation_date =  models.DateTimeField(auto_now_add = False, blank=True, null=True)
+
+    # TO STRING METHOD
+    def __str__(self):
+        return self.target

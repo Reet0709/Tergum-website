@@ -94,11 +94,9 @@ class Profile(TimestampedModel):
 
     def save(self, *args, **kwargs):
         super().save()
-        try:
-            img = Image.open(self.image.path)
-        except:
-            url = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
-            img = Image.open(requests.get(url, stream=True).raw)
+        
+        url = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+        img = Image.open(requests.get(url, stream=True).raw)
 
             
         

@@ -56,9 +56,11 @@ class Submissions(models.Model):
     def __str__(self):
         return self.refrence_attachment.orignal_filename
 
+'''
 class Notifications(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, blank=True, null=True)
     creation_date =  models.DateTimeField(auto_now_add = False, verbose_name="Submission date", blank=True, null=True)
     link = models.CharField(max_length=300) #Defalut windows file name length
     text = models.CharField(max_length=100) #Defalut windows file name length
     read = models.BooleanField(default=False)
+'''

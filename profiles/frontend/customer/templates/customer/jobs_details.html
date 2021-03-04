@@ -358,11 +358,20 @@
                                  {% if contract.completed %}
                                  {% if contract.final %}
                                  {% if contract.rating > 0 %}
-                                 <button class="paid-btn my-3"  style="text-align: center; width: 100%;" style="cursor: pointer;" onclick="location.href = '/contract/feedback/{{contract.contract_id}}';" ><strong>{{contract.rating}} Starts</strong></button>
+                                 
+                                 {% if not request.user.is_superuser %}
+                                 <button class="paid-btn my-3"  style="text-align: center; width: 100%;" style="cursor: pointer;" onclick="location.href = '/contract/feedback/{{contract.contract_id}}';" ><strong>{{contract.rating}} Stars</strong></button>
+                                 {% else %}
+                                 <button class="paid-btn my-3"  style="text-align: center; width: 100%;" style="cursor: context-menu;"  ><strong>{{contract.rating}} Stars</strong></button>
+                                 {% endif %}
 
                                     {% else %}
+                                 {% if not request.user.is_superuser %}
                                     <button class="type-btn my-3"  style="text-align: center; width: 100%;" style="cursor: pointer;" onclick="location.href = '/contract/feedback/{{contract.contract_id}}';" ><strong>Provide Feedback</strong></button>
-                                
+                                    {% else %}
+                                    <button class="paid-btn my-3"  style="text-align: center; width: 100%;" style="cursor: context-menu;"  ><strong>Awaiting Feedback</strong></button>
+                                    {% endif %}
+
                                 {% endif %}
 
                                     {% else %}

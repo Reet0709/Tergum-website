@@ -38,18 +38,13 @@ from django.core.validators import validate_email
 
 
 
-#TODO Admin Only Authentication
-#TODO Admin Only Authentication
-#TODO Admin Only Authentication
-#TODO Admin Only Authentication
-#TODO Admin Only Authentication
 
 def create_translator(request): 
     '''
     Validates email and passowrd and login the user using session authentication. 
     '''
     ISO = request.LANGUAGE_CODE
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_superuser:
         data = request.data
         
         firstname = data.get('first_name')
@@ -137,6 +132,7 @@ def create_translator(request):
 
 
 from services.models import Contract, Job
+from common.models import Notifications
 
 @api_view(['POST'])
 @throttle_classes([AnonRateThrottle]) #Limiting number of API calls a user can make.
@@ -149,7 +145,7 @@ def contract_assign(request):
     from django.utils import timezone
 
     ISO = request.LANGUAGE_CODE
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_superuser:
         data = request.data
         empID = data.get('empID')
         cID = data.get('cID')
@@ -161,6 +157,8 @@ def contract_assign(request):
             contract_obj.is_signed = True
             contract_obj.signing_date =  timezone.now()
             contract_obj.save()
+            Notifications.objects.create(target=user_obj, creation_date=timezone.now(), text="Admin assigned you a new contract.", icon="fas fa-pen", colour="warning", link="/employee/contract/details/{}".format(contract_obj.contract_id))
+
             return Response(status=status.HTTP_202_ACCEPTED)
 
         else:
@@ -184,7 +182,7 @@ def contract_paid(request):
     from django.utils import timezone
 
     ISO = request.LANGUAGE_CODE
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_superuser:
         data = request.data
         cID = data.get('contract_id')
         print(cID)
@@ -192,6 +190,8 @@ def contract_paid(request):
         if contract_obj.completed == True:
             contract_obj.paid = True
             contract_obj.save()
+            Notifications.objects.create(target=contract_obj.profile, creation_date=timezone.now(), text="Admin marked your contract paid", icon="fas fa-dollar-sign",  colour="success", link="/employee/contract/details/{}".format(contract_obj.contract_id))
+
             return Response(status=status.HTTP_202_ACCEPTED)
 
         else:

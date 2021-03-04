@@ -119,7 +119,7 @@ def translator_accepted_contracts(request, username):
 
 
 def view_employee_details(request, username):
-    if request.user.is_superuser and request.user.is_active:
+    if request.user.is_active:
         from users.models import User
         if User.objects.filter(username=username).exists():
             user_obj = User.objects.get(username=username)
