@@ -294,11 +294,11 @@ def job_api(request):
                 mode='payment',
                 
                 #redirect to create order step-2 screen if user cancel the payment
-                cancel_url="{DOMAIN}/{ISO}/order/step-2/{JOB_ID}".format(DOMAIN=YOUR_DOMAIN, ISO=ISO, JOB_ID=job_id),
+                cancel_url="https://tergum.cruv.dev/en/order/step-2/{JOB_ID}".format(DOMAIN=YOUR_DOMAIN, ISO=ISO, JOB_ID=job_id),
                 #if the payment is successfully "processed" (might or might not be received , to verify 
                 #if payment is received  is listen to stripe's webhook [in payment_gateway app] for confirmation) 
                 #unique and temporary payment_token is passed in success_url to ensure security.  
-                success_url="{DOMAIN}/{ISO}/order/success/{JOB_ID}/{TOKEN}".format(DOMAIN=YOUR_DOMAIN, ISO=ISO, JOB_ID=job_id, TOKEN=verifiers.create_payment_token(job_obj)),
+                success_url="https://tergum.cruv.dev/en/order/success/{JOB_ID}/{TOKEN}".format(DOMAIN=YOUR_DOMAIN, ISO=ISO, JOB_ID=job_id, TOKEN=verifiers.create_payment_token(job_obj)),
             )
             return Response({'id': checkout_session.id}, status=status.HTTP_202_ACCEPTED)
         except Exception as e:

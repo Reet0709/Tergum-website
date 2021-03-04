@@ -28,6 +28,10 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings
 from .models import invite_links
+
+
+from django.core.validators import validate_email
+
 @api_view(['POST'])
 @throttle_classes([AnonRateThrottle]) #Limiting number of API calls a user can make.
 @authentication_classes([CsrfExemptSessionAuthentication, SessionAuthentication, BasicAuthentication])
@@ -69,51 +73,66 @@ def create_translator(request):
         elif len(lastname)==0:
             return getResponce(ISO, 'signup_no_lastname')
 
-        elif not accepted: #from validateEmail function
-            return Response({'error': reason}, status=status.HTTP_200_OK)
-        
+        if not User.objects.all().filter(email = email).exists(): #email not alredy used.
+            try:
+                validate_email( email )
+            except ValidationError:
+                reason = "Please enter a valid email"
+                return Response({'error': reason}, status=status.HTTP_200_OK)
+
         else:
+            user_obj = User.objects.get(email = email)
+            print(user_obj.is_active)
+            if user_obj.is_active:
+                reason = "The email address is on another account, use another email or login"
+                return Response({'error': reason}, status=status.HTTP_200_OK)
+            else:
+                profile = Profile.objects.get(user=user_obj)
+                profile.delete()
+                user_obj.delete()
+        
             #eveything is valid
             #username = email.split("@")[0] #temporary username
-            is_available, suggestions= check_or_get_username(firstname)
-            if is_available:
-               username = firstname
-            else:
-                username= suggestions[0]
+        is_available, suggestions= check_or_get_username(firstname)
+        if is_available:
+            username = firstname
+        else:
+            username= suggestions[0]
             
-            
-            user = User.objects.create_user(is_staff=True, is_active= False, first_name = firstname, last_name=lastname, username=username, email = email, password =password)
-            profile = Profile.objects.get(user=user)
-            #assign target languages do the Job
-            for language_pk in source_language_pks:
-                #print(language_pk)
-                profile.from_languages.add(Language.objects.get(pk=int(language_pk)))
-            
-            for language_pk in target_language_pks:
-                #print(language_pk)
+        
+        user = User.objects.create_user(is_staff=True, is_active= False, first_name = firstname, last_name=lastname, username=username, email = email, password =password)
+        profile = Profile.objects.get(user=user)
+        #assign target languages do the Job
+        for language_pk in source_language_pks:
+            #print(language_pk)
+            profile.from_languages.add(Language.objects.get(pk=int(language_pk)))
+        
+        for language_pk in target_language_pks:
+            #print(language_pk)
 
-                profile.to_languages.add(Language.objects.get(pk=int(language_pk)))
-            
-            for content_pk in content_type_pks:
-                #print(content_pk)
-                profile.content_types.add(Content.objects.get(pk=int(content_pk)))
-            
-            link_obj = invite_links.objects.create(user=user, token=urandom(10).hex())
-            try:
-                subject = 'Welcome to Tergum | Employee Registration'
-                html_message = render_to_string('administrator/email_employee_registration.html', {'user': user, "link_obj":link_obj})
-                message = strip_tags(html_message)
-                email_from = settings.EMAIL_HOST_USER
-                recipient_list = [ email,]
-                send_mail( subject, message, email_from, recipient_list, html_message=html_message, fail_silently=False )
-            except Exception as e:
-                print(e)
-                profile.delete()
-                user.delete()
-                return getResponce(ISO, 'email_not_sent')
-            return Response(status=status.HTTP_202_ACCEPTED)
+            profile.to_languages.add(Language.objects.get(pk=int(language_pk)))
+        
+        for content_pk in content_type_pks:
+            #print(content_pk)
+            profile.content_types.add(Content.objects.get(pk=int(content_pk)))
+        
+        link_obj = invite_links.objects.create(user=user, token=urandom(10).hex())
+        try:
+            subject = 'Welcome to Tergum | Employee Registration'
+            html_message = render_to_string('administrator/email_employee_registration.html', {'user': user, "link_obj":link_obj})
+            message = "Welcome to Tergum! You have been registered as an employee by the admin."
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [ email,]
+            send_mail( subject, message, email_from, recipient_list, html_message=html_message, fail_silently=False )
+        except Exception as e:
+            print(e)
+            profile.delete()
+            user.delete()
+            return getResponce(ISO, 'email_not_sent')
+        return Response(status=status.HTTP_202_ACCEPTED)
     else:
         return redirect('/verification')
+
 
 
 

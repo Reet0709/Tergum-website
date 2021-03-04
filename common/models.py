@@ -73,11 +73,19 @@ class Status(models.Model):
         return self.status_name
 
 from django.core.exceptions import ValidationError
+
+
+def placeholder_path_name(instance, filename):
+    placeholder_path_name = "base/placeholder.png"
+    return placeholder_path_name 
+
 class Variables(models.Model):
     base_price = models.FloatField() #defaut price
     company_share = models.IntegerField() #30% of the total price paid by the employeer
     translator_share = models.IntegerField() #70% of the amount remaing after company_share
     proofreader_share = models.IntegerField() #30% of the amount remaing after company_share
+    placeholder = models.ImageField(upload_to = placeholder_path_name, null=True) #default profile pic
+
     #content_expert_bonus = models.IntegerField() #10% subtracted from proofreader_share and added to translator_share
     def clean(self):
         if self.translator_share + self.proofreader_share != 100:

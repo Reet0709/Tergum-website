@@ -26,6 +26,7 @@ def image_file_name(instance, filename):
     return new_path 
 from PIL import Image
 from services.models import Contract
+import requests
 
 class Profile(TimestampedModel):
     TRANSLATOR = "TR"
@@ -93,7 +94,15 @@ class Profile(TimestampedModel):
 
     def save(self, *args, **kwargs):
         super().save()
-        img = Image.open(self.image.path)
+        try:
+            img = Image.open(self.image.path)
+        except:
+            url = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"
+            img = Image.open(requests.get(url, stream=True).raw)
+
+            
+        
+        
         width, height = img.size  # Get dimensions
 
         if width > 300 and height > 300:

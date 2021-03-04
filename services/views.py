@@ -25,6 +25,7 @@ def order_step1(request, job_id):
         supported_from_langs = []
         for profile in all_profile:
             supported_from_langs.extend(profile.from_languages.all())
+        supported_from_langs = list(set(supported_from_langs))
 
 
         return render(request, 'order/create_order_step1.html', {"job_obj": job_obj, "languages":supported_from_langs})
@@ -44,6 +45,7 @@ def order_step2(request, job_id):
         supported_to_langs = []
         for profile in all_profile:
             supported_to_langs.extend(profile.from_languages.all().exclude(pk=job_obj.source_language.pk)  )
+        supported_to_langs = list(set(supported_to_langs))
 
 
         #languages = Language.objects.all().exclude(pk=job_obj.source_language.pk)  
