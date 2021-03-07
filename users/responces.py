@@ -18,6 +18,7 @@ def getResponce(*args):
         "username_unavaiable" : Response({'error': "This username is not available"}, status=status.HTTP_200_OK),
 
         "email_not_sent" : Response({'error': "Couldn't send email, please try again."}, status=status.HTTP_200_OK),
+        "invalid_email" : Response({'error': "No account associated with this email."}, status=status.HTTP_200_OK),
 
       
         },

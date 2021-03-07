@@ -8,22 +8,23 @@
       <title>Tergum - Professional Translation Service</title>
       <meta content="" name="descriptison">
       <meta content="" name="keywords">
-      {% include "base/exception_head.html" %}
 
       <!-- Favicons -->
       <link rel="shortcut icon" href="{% static 'base/images/favicon.ico' %}" />
-      <!-- Google Fonts -->
       <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Raleway:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
       <!-- Vendor CSS Files -->
       <link href="{% static 'base/css/bootstrap.min.css' %}" rel="stylesheet">
-      <link href="{% static 'home/vendor/icofont/icofont.min.css' %}" rel="stylesheet">
-      <link href="{% static 'home/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
-      <link href="{% static 'home/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
-      <link href="{% static 'home/vendor/venobox/venobox.css' %}" rel="stylesheet">
-      <link href="{% static 'home/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
-      <link href="{% static 'home/vendor/aos/aos.css' %}" rel="stylesheet">
+      <link href="{% static 'order/vendor/icofont/icofont.min.css' %}" rel="stylesheet">
+      <link href="{% static 'order/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+      <link href="{% static 'order/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+      <link href="{% static 'order/vendor/venobox/venobox.css' %}" rel="stylesheet">
+      <link href="{% static 'order/vendor/owl.carousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+      <link href="{% static 'order/vendor/aos/aos.css' %}" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link href="https://fonts.googleapis.com/css?family=Karla:400,700&display=swap" rel="stylesheet">
       <!--  Main CSS File -->
       <link href="{% static 'customer/css/style.css' %}" rel="stylesheet">
+
       <style>
          .container .invoice-stand {
          background:#DAA520;
@@ -91,9 +92,83 @@
          td{padding:3px !important}
          th{padding:3px !important}
          .form-control{border-radius:0px !important;}
+
+
+
+
+ul {
+  list-style-type: none;
+  -webkit-padding-start: 35px;
+          padding-inline-start: 35px;
+}
+
+svg {
+  width: 100%;
+  visibility: hidden;
+}
+
+h1 {
+  font-size: 7.5em;
+  margin: 15px 0px;
+  font-weight: bold;
+}
+
+h2 {
+  font-weight: bold;
+}
+
+
+.btn {
+  z-index: 1;
+  overflow: hidden;
+  background: transparent;
+  position: relative;
+  padding: 8px 50px;
+  border-radius: 30px;
+  cursor: pointer;
+  font-size: 1em;
+  letter-spacing: 2px;
+  transition: 0.2s ease;
+  font-weight: bold;
+  margin: 5px 0px;
+}
+.btn.green {
+    background-color:  #f8f9fc;
+    color: #009970;
+    border-radius: 6px;
+    margin: 0 2px;
+    border: 2px solid;
+    border-color: #009970;
+    padding: 8px 25px;
+}
+
+.btn.green:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0%;
+  height: 100%;
+  background: #009970;
+  z-index: -1;
+  transition: 0.2s ease;
+}
+
+.btn.green:hover {
+  color: #fff;
+  background: #009970;
+  border: 2px solid;
+    border-color: #009970;
+  transition: 0.2s ease;
+}
+.btn.green:hover:before {
+  width: 100%;
+}
       </style>
+
    </head>
    <body>
+      
       <!--  Header  -->
       <header id="header" class="fixed-top d-flex align-items-center">
          <div class="container">
@@ -217,7 +292,7 @@
                                              <tbody>
                                                 {% for attachment in job.attachments.all %}
                                                 <tr>
-                                                   <th><a href="{{attachment.file.url}}" download>{{attachment.orignal_filename}}</a></th>
+                                                   <th class="text-wrap text-break"><a href="{{attachment.file.url}}" download>{{attachment.orignal_filename}}</a></th>
                                                    <td>{{attachment.word_count}} words</td>
                                                 </tr>
                                                 {% endfor %}
@@ -284,7 +359,7 @@
                                                 
                                                 {% for attachment in job.attachments.all %}
                                                 <tr>
-                                                   <th><a href="{{attachment.file.url}}" download>{{attachment.orignal_filename}}</a></th>
+                                                   <th class="text-wrap text-break"><a href="{{attachment.file.url}}" download>{{attachment.orignal_filename}}</a></th>
                                                    <td>{{attachment.word_count}} words</td>
                                                 </tr>
                                                 {% endfor %}
@@ -348,7 +423,7 @@
                                              <tbody>
                                                 {% for attachment in job.attachments.all %}
                                                 <tr>
-                                                   <th><a href="{{attachment.file.url}}" download>{{attachment.orignal_filename}}</a></th>
+                                                   <th class="text-wrap text-break"><a href="{{attachment.file.url}}" download>{{attachment.orignal_filename}}</a></th>
                                                    <td>{{attachment.word_count}} words</td>
                                                 </tr>
                                                 {% endfor %}

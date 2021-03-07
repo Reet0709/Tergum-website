@@ -29,7 +29,7 @@ def dashboard(request):
         notifications = Notifications.objects.all().filter(target=request.user).order_by('-pk')[:10:1]
         active_jobs = Job.objects.all().filter(accepted=True).exclude(status__status_name="DN")
         completed_jobs = len(Job.objects.all().filter(status__status_name="DN"))
-        translator_count = len(User.objects.all().filter(is_staff=True, is_active=True))
+        translator_count = len(User.objects.all().filter(is_staff=True, is_active=True, is_superuser=False)) 
         pending_jobs = len(Job.objects.all().filter(paid=False))
         active_jobs_count = len(active_jobs)
 

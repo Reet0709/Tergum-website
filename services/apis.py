@@ -93,6 +93,89 @@ def attchment_api(request, attachment_id=None):
                     except UnicodeDecodeError:
                         #file file not utf8 encoded.
                         error= "File not supported!"
+
+
+            elif filename.lower().endswith(('.docx'))  :
+            
+                try:
+                    from xml.etree.cElementTree import XML
+                except ImportError:
+                    from xml.etree.ElementTree import XML
+                import zipfile
+
+                WORD_NAMESPACE = '{http://schemas.openxmlformats.org/wordprocessingml/2006/main}'
+                PARA = WORD_NAMESPACE + 'p'
+                TEXT = WORD_NAMESPACE + 't'
+
+                document = zipfile.ZipFile(attachment)
+                #document= attachment
+                xml_content = document.read('word/document.xml')
+                document.close()
+                tree = XML(xml_content)
+
+                paragraphs = []
+                for paragraph in tree.getiterator(PARA):
+                    texts = [node.text
+                            for node in paragraph.getiterator(TEXT)
+                            if node.text]
+                    if texts:
+                        paragraphs.append(''.join(texts))
+                
+                for line in paragraphs:
+                    #exclude the words between "[[[" and "]]]" from the word count.
+                    try:
+                        first, _, rest = line.partition('[[[')
+                        _, _, rest = rest.partition(']]]')
+                        line = ' '.join([first.strip(), rest.strip()])     
+                        file_words += len(line.split())
+                    except UnicodeDecodeError:
+                        #file file not utf8 encoded.
+                        error= "File not supported!"
+                
+            elif filename.lower().endswith(('.pdf')) :
+                # importing required modules  
+                from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+                from pdfminer.converter import TextConverter
+                from pdfminer.layout import LAParams
+                from pdfminer.pdfpage import PDFPage
+                from io import StringIO
+
+                rsrcmgr = PDFResourceManager()
+                retstr = StringIO()
+                codec = 'utf-8'
+                laparams = LAParams()
+                device = TextConverter(rsrcmgr, retstr, codec=codec, laparams=laparams)
+                fp = attachment
+                interpreter = PDFPageInterpreter(rsrcmgr, device)
+                password = ""
+                maxpages = 0
+                caching = True
+                pagenos=set()
+
+                for page in PDFPage.get_pages(fp, pagenos, maxpages=maxpages, password=password,caching=caching, check_extractable=True):
+                    interpreter.process_page(page)
+
+                text = retstr.getvalue()
+
+                #fp.close()
+                device.close()
+                retstr.close()
+                #print())
+                for line in text.split('\n'):
+                    #exclude the words between "[[[" and "]]]" from the word count.
+                    try:
+                        first, _, rest = line.partition('[[[')
+                        _, _, rest = rest.partition(']]]')
+                        line = ' '.join([first.strip(), rest.strip()])     
+                        file_words += len(line.split())
+                    except UnicodeDecodeError:
+                        #file file not utf8 encoded.
+                        error= "File not supported!"
+
+            else:
+                error= "File type not supported!"
+
+
             if error == None:
                 #add attachment to the Job
                 attachment_obj = Attachment.objects.create(owner=request.user, word_count=file_words, orignal_filename=str(attachment), file = attachment)    

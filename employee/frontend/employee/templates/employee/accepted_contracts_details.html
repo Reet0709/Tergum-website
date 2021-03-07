@@ -283,7 +283,7 @@
 												<input type="hidden" id="attachment_id" name="attachment_id" value="{{submission.refrence_attachment.attachment_id}}">
 												<input type="hidden" id="contract_id" name="contract_id" value="{{contract.contract_id}}"> {% if submission.is_submitted %} <a href="{{submission.submission_file.url}}" target="_blank">  {{submission.submission_filename}} </a>
 												<br> {% endif %}
-												<input type="file" accept=".txt" id="submission" name="submission">
+												<input type="file" accept=".txt, .pdf, .docx" id="submission" name="submission">
 										</div>
 										<div class="col-lg-2 ml-1">
 											<button class="upload-btn" value="{{submission.refrence_attachment.attachment_id}}">Upload</button>
@@ -421,7 +421,16 @@
 									<div class="card border-left-success shadow h-100 pb-0">
 										<div class="card-body pb-1">
 											<div class="heading">
+
+												{% if contract.paid %}
+												<h3></h3> <span>paid ✔️</span> </div>
+
+												{%else%}
 												<h3></h3> <span>pending</span> </div>
+
+												{%endif%}
+
+												
 											<div class="row my-4">
 												<div class="col mr-2">
 													<div class="text-xs font-weight-bold text-success text-uppercase mb-1"> Amount </div>

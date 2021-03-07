@@ -168,18 +168,8 @@ def create_submission(request):
                     file_words = 0
                     filename = str(submission)
                     print(filename)
-                    if filename.lower().endswith(('.txt')):
-                        #if the uploaded file is .txt file
-                        for line in submission:
-                            #exclude the words between "[[[" and "]]]" from the word count.
-                            try:
-                                first, _, rest = line.decode('utf8').partition('[[[')
-                                _, _, rest = rest.partition(']]]')
-                                line = ' '.join([first.strip(), rest.strip()])     
-                                file_words += len(line.split())
-                            except UnicodeDecodeError:
-                                #file file not utf8 encoded.
-                                error= "File not supported!"
+                    if filename.lower().endswith(('.txt')) or filename.lower().endswith(('.pdf')) or filename.lower().endswith(('.docx')):
+                    
                         if error == None:
                             #add submission to the Job
                             #submission_obj = Attachment.objects.create(owner=request.user, word_count=file_words, orignal_filename=str(submission), file = submission)    

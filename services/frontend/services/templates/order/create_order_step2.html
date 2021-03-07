@@ -360,7 +360,7 @@
                                                 {% for attachment in job_obj.attachments.all %}
                                                 <div class="row">
                                                    <div class="col" style="vertical-align : middle">
-                                                      <strong>{{attachment.orignal_filename}}</strong> <br>({{job_obj.source_language.language_name}})
+                                                      <div class="text-wrap text-break"><strong>{{attachment.orignal_filename}}</strong></div> ({{job_obj.source_language.language_name}})
                                                    </div>
                                                    <div class="col d-none d-md-block langs langs_{{ forloop.counter0 }}">
                                                       <div class="row mx-auto">

@@ -12,7 +12,7 @@ def submission_file_name(instance, filename):
     random_file_name = create_file_name()
     file_path = '{owner}/'.format(owner=instance.refrence_attachment.owner.pk) 
     #here instance.user.pk is uysed rather then reverse lookup for related user becuase this file is created before assinging the verificationDocument object to user's document thus no results will be found in reverse lookup    
-    orignal_name = instance.refrence_attachment.orignal_filename.split(".")[0]+"_{}".format(str(instance.target_language.language_name))+"_{}".format("Proofreaded")
+    orignal_name = instance.refrence_attachment.orignal_filename.split(".")[0]+"_{}".format(str(instance.target_language.language_name))+"_{}".format("Translated")
     extention = instance.refrence_attachment.orignal_filename.split(".")[-1]
     exist = os.path.isfile(settings.MEDIA_ROOT+'/'+orignal_name +'_'+ random_file_name+"."+extention)
     new_path = file_path+'/'+orignal_name+'_'+random_file_name+"."+extention

@@ -22,7 +22,7 @@ def view_employee(request):
 def available_jobs(request):
     if request.user.is_superuser and request.user.is_active:
        
-        active_jobs = Job.objects.all().filter(accepted=True, paid=True)
+        active_jobs = Job.objects.all().filter(accepted=True, paid=True).exclude(status__status_name="DN")
         return render(request, 'administrator/available_jobs.html', {"active_jobs":active_jobs})
     else:
         return redirect("/login") #TODO replace with view url lookups.   

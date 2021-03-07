@@ -230,7 +230,11 @@
 
     <!-- Page Wrapper -->
     <div id="wrapper">
-   
+   {% if request.user.is_staff %}
+        
+        {% include 'administrator/sidebar.html' %}
+        {% endif %}
+
 
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -245,7 +249,14 @@
 
                     <!-- Content Row -->
                     <div class="section-title" data-aos="fade-right">
+                        <div class="col">
                             <h2>Jobs#{{job_obj.job_id}}</h2>
+                        </div>
+                            {% if request.user.is_superuser %}
+                            <div class="col text-right pull right my-2">
+                              <button class="assignto-btn" style="cursor: pointer;color:white;" onclick="location.href = '/admin/jobs/details/{{job_obj.job_id}}';">Assign Contracts</button>
+                          </div>
+                      {% endif %}
                     </div>
 
 <div class="row">
@@ -318,7 +329,8 @@
                            <div class="col">
                             <h3>Contract#{{contract.contract_id}}</h3>   
                           </div>
-                    
+                        
+
                           {% if contract.completed and contract.final %}
 
                           <div class="col-auto my-auto ">
@@ -495,7 +507,7 @@ var urls = [
 '{{submission.submission_file.url}}',
 {% endfor %}
                ];
-var nombre = "{{contract.job.source_language}}_to_{{contract.target_language}}";
+var nombre = "{{contract.job.source_language}}to{{contract.target_language}}";
 //The function is called
 compressed_img(urls,nombre);
 

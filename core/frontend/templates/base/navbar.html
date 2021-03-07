@@ -1,7 +1,19 @@
 {% load static %}
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 	<!-- Sidebar Toggle (Topbar) -->
+ 
+ 
+ 	{% if request.user.is_staff %}
+
 	<button id="sidebarToggleTop" class="btn btn-link rounded-circle mr-3"> <i class="fa fa-bars"></i> </button>
+
+	{% else %}
+
+	<button id="sidebarToggleTop"  onclick="location.href = '/';" class="btn btn-link rounded-circle mr-3" > <i class="fa fa-home"></i> </button>
+
+	{% endif %}
+ 
+ 
 	<!-- Topbar Navbar -->
 	<ul class="navbar-nav ml-auto">
 		{% if dashboard %}
